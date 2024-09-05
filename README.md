@@ -7,3 +7,10 @@
                      |_|
 ```
 Convert text into leet-speak text.
+
+
+# Benchmarking
+| Method | Speed |
+| :--- | ---: |
+| Naive Implementation | 17.288MB/second |
+| Naive with -O3 | 18.490MB/second |
