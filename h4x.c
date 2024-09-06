@@ -58,25 +58,23 @@ void fromFile(char str[], int len) {
 	
 	int i = 0;
 	char printbuffer[batch_size];
-	
+	__m256i batch = _mm256_loadu_si256((__m256i *)(str+i));
 	if(len > batch_size) {
 		for(; i + (batch_size-1) < len; i += batch_size) {
-			__m256i batch = _mm256_loadu_si256((__m256i *)(str+i));
+			batch = _mm256_loadu_si256((__m256i *)(str+i));
 			for(int j = 0; j < findcount; j++) {
-				__m256i cmp = _mm256_cmpeq_epi8(batch, find[j]);
-				batch = _mm256_blendv_epi8(batch, replace[j], cmp);
+				batch = _mm256_blendv_epi8(batch, replace[j], _mm256_cmpeq_epi8(batch, find[j]));
 			}
 			_mm256_storeu_si256((__m256i*)printbuffer, batch);
 			fwrite(printbuffer, sizeof(char), batch_size, stdout);
 		}
 	}
 	// run through the rest of the input
-	int lastbits = len - i;
 	if (i < len) {
-		__m256i batch = _mm256_loadu_si256((__m256i *)(str + len - batch_size));
+		int lastbits = len - i;
+		batch = _mm256_loadu_si256((__m256i *)(str + len - batch_size));
 		for(int j = 0; j < findcount; j++) {
-			__m256i cmp = _mm256_cmpeq_epi8(batch, find[j]);
-			batch = _mm256_blendv_epi8(batch, replace[j], cmp);
+			batch = _mm256_blendv_epi8(batch, replace[j], _mm256_cmpeq_epi8(batch, find[j]));
 		}
 		_mm256_storeu_si256((__m256i*)printbuffer, batch);
 		fwrite(printbuffer+(batch_size-lastbits), sizeof(char), lastbits, stdout);
