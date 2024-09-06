@@ -14,3 +14,5 @@ Convert text into leet-speak text.
 | :--- | ---: |
 | Naive Implementation | 17.288MB/second |
 | Naive with -O3 | 18.490MB/second |
+| AVX2 with -O3 | 403.963MB/second |
+| AVX2 with -O3 and big write buffer | 1.634GB/second |
