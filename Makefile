@@ -1,5 +1,5 @@
 CFLAGS = -Wall -O3 -march=skylake
-H4XSRC = h4x.c reference.c avx.c
+H4XSRC = h4x.c reference.c avx.c threaded.c
 
 all: h4x unh4x
 
