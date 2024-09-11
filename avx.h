@@ -1,1 +1,1 @@
-void avxFromFile(char str[], int len);
+void avxFromFile(char str[], size_t len);

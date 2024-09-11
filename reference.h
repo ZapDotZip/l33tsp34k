@@ -1,1 +1,1 @@
-void fromstdin();
+void fromstdin(void);

@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 set -o errexit
+
+if [ "$#" -ne 2 ]; then
+	echo "Usage: [-r/-t/-a] file"
+	exit
+fi
+
+
 FMT="si" # si: 1000B==1K, iec: 1024B==1K
 
-hyperfine -N  --setup "vmtouch -t '$1'" "./h4x '$1'" --export-json bench.json
+hyperfine -N  --setup "vmtouch -t '$2'" "./h4x $1 '$2'" --export-json bench.json
 
-COUNT=$(ls -l "$1" | awk '{print $5}')
+COUNT=$(ls -l "$2" | awk '{print $5}')
 JSON=($(jq -r '.results[] | .mean, .stddev, .median, .min, .max' bench.json))
 
 MEAN=$(echo "scale=6; $COUNT/${JSON[0]}" | bc | numfmt --to=$FMT --suffix=B --format="%.3f")
