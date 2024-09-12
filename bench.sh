@@ -9,7 +9,7 @@ fi
 
 FMT="si" # si: 1000B==1K, iec: 1024B==1K
 
-hyperfine -N  --setup "vmtouch -t '$2'" "./h4x $1 '$2'" --export-json bench.json
+hyperfine -N --setup "vmtouch -t '$2'" -L buf 1,2,4,8 "./h4x $1 {buf} '$2'" --export-json bench.json
 
 COUNT=$(ls -l "$2" | awk '{print $5}')
 JSON=($(jq -r '.results[] | .mean, .stddev, .median, .min, .max' bench.json))

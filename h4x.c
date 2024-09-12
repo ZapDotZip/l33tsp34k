@@ -10,6 +10,7 @@
 #include "threaded.h"
 
 static int mode = 0;
+static int bufsize = 0;
 
 
 void loadFile(char* path) {
@@ -26,7 +27,7 @@ void loadFile(char* path) {
 		exit(2);
 	}
 	if(mode == 0) avxFromFile(fptr, st.st_size);
-	else threadedlaunch(fptr, st.st_size);
+	else threadedlaunch(fptr, st.st_size, bufsize);
 }
 
 int main(int argc, char *argv[]) {
@@ -43,7 +44,8 @@ int main(int argc, char *argv[]) {
 				break;
 			case 't':
 				mode = 1;
-				for(int i = 2; i < argc; i++) {
+				bufsize = atoi(argv[2]);
+				for(int i = 3; i < argc; i++) {
 					loadFile(argv[i]);
 				}
 				break;

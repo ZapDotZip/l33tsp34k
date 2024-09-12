@@ -11,7 +11,6 @@ struct thread_args {
 	size_t len;
 };
 
-static const int THREAD_BATCH_SIZE = 1024 * 1024 * 128; // 128 MB buffer per core
 
 static const int batch_size = 256 / 8; // avx2 is 256-bit and chars are 8 bits long
 static const int findcount = 10; // the number of characters to replace in the find and replace arrays
@@ -38,7 +37,8 @@ void threaded_avx(struct thread_args* args) {
 }
 
 
-void threadedlaunch(char str[], size_t len) {
+void threadedlaunch(char str[], size_t len, size_t bufsize ) {
+	size_t THREAD_BATCH_SIZE = 1024 * 1024 * bufsize; // variable buffer size per core
 	long core_count = sysconf(_SC_NPROCESSORS_ONLN);
 	size_t trueBatchSize = THREAD_BATCH_SIZE * core_count;
 	char* outs[core_count];
@@ -53,7 +53,7 @@ void threadedlaunch(char str[], size_t len) {
 	if(len > THREAD_BATCH_SIZE) {
 		while(str+trueBatchSize < end) {
 			for(int c = 0; c < core_count; c++) {
-				struct thread_args* args = malloc(sizeof(struct thread_args));
+				struct thread_args* args = malloc(sizeof(struct thread_args)); // a small memory leak for a few dozen MB/s.
 				args->input = &str[THREAD_BATCH_SIZE*c];
 				args->output = outs[c];
 				args->len = THREAD_BATCH_SIZE;
